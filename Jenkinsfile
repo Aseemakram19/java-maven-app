@@ -12,7 +12,7 @@ pipeline {
         }
         stage('Git clone') {
             steps {
-                git branch: 'main', url: 'https://github.com/Aseemakram19/java-maven-app.git'
+                git branch: 'feature-1', url: 'https://github.com/Aseemakram19/java-maven-app.git'
             }
         }
         stage('maven war file build') {
@@ -20,30 +20,22 @@ pipeline {
                sh 'mvn clean package'
             }
         }
-        stage('Docker images/conatiner remove') {
-            steps {
-                script{
-                        sh '''docker stop javamavenapp_container
-                        docker rm javamavenapp_container
-                        docker rmi javamavenapp aseemakram19/javamavenapp:latest'''
-                }  
-            }
-        }
+        
         stage('Docker images - Push to dockerhub') {
             steps {
                 script{
                     withDockerRegistry(credentialsId: 'docker', toolname: 'docker'){
                 
-                        sh '''docker build -t javamavenapp .
-                        docker tag javamavenapp aseemakram19/javamavenapp:latest
-                        docker push  aseemakram19/javamavenapp:latest'''
+                        sh '''docker build -t javamavenappfeature-1 .
+                        docker tag javamavenappfeature-1 aseemakram19/javamavenappfeature-1:latest
+                        docker push  aseemakram19/javamavenappfeature-1:latest'''
                       } 
                 }
             }
         }
         stage('docker container of app') {
             steps {
-               sh 'docker run -d -p 9000:8080 --name javamavenapp_container -t aseemakram19/javamavenapp:latest'
+               sh 'docker run -d -p 9001:8080 --name javamavenappfeature-1_container -t aseemakram19/javamavenappfeature-1:latest'
             }
         }
         
